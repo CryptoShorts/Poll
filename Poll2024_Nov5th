@@ -1,0 +1,31 @@
+import numpy as np
+from statsmodels.tsa.arima.model import ARIMA
+
+# Set candidate win probabilities based on initial estimates
+polling_probability_harris = 0.49  # e.g., polling-based probability for Harris
+polling_probability_trump = 0.51   # e.g., polling-based probability for Trump
+
+betting_probability_harris = 0.47  # e.g., betting market-based probability for Harris
+betting_probability_trump = 0.53   # e.g., betting market-based probability for Trump
+
+# Trend adjustment based on momentum and recent RoC calculation
+trend_adjustment_harris = 0.48
+trend_adjustment_trump = 0.52
+
+# Combine all probabilities with assigned weights
+alpha, beta, gamma = 0.4, 0.3, 0.3  # Weights for polling, betting, and trend, respectively
+final_probability_harris = alpha * polling_probability_harris + beta * betting_probability_harris + gamma * trend_adjustment_harris
+final_probability_trump = alpha * polling_probability_trump + beta * betting_probability_trump + gamma * trend_adjustment_trump
+
+# Run Monte Carlo Simulation
+num_simulations = 1000
+results = np.random.choice(['Harris', 'Trump'], size=num_simulations, 
+                           p=[final_probability_harris, final_probability_trump])
+
+# Calculate win probabilities
+win_harris = np.sum(results == 'Harris') / num_simulations
+win_trump = np.sum(results == 'Trump') / num_simulations
+
+# Output results
+print(f"Harris Win Probability: {win_harris * 100:.2f}%")
+print(f"Trump Win Probability: {win_trump * 100:.2f}%")
